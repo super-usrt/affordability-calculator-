@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Can I Afford This? Calculator</title>
+<meta name="description" content="Find out how many days of work it takes to afford anything. A simple, eye-opening affordability calculator based on your real income.">
+<meta name="keywords" content="affordability calculator, salary vs price, how long to afford something, work hours to buy, price in days of work">
+<meta property="og:title" content="Can I Afford This? Calculator">
+<meta property="og:description" content="How many days of your life does that cost? Find out instantly.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+<style>
+/* =============================================
+   VARIABLES
+============================================= */
+:root {
+  --bg: #f5f3ef;
+  --bg2: #edeae4;
+  --surface: #ffffff;
+  --surface2: #faf9f7;
+  --border: #e2ddd6;
+  --text: #1a1611;
+  --text2: #6b6459;
+  --text3: #a09890;
+  --ink: #1a1611;
+  --green: #1a7a4a;
+  --green-bg: #e8f5ee;
+  --yellow: #8a6500;
+  --yellow-bg: #fef8e6;
+  --red: #b83232;
+  --red-bg: #fdeaea;
+  --accent: #2a5bd7;
+  --accent-light: #eef2fc;
+  --shadow: 0 2px 16px rgba(26,22,17,0.07);
+  --shadow-md: 0 8px 40px rgba(26,22,17,0.10);
+  --r: 20px;
+  --r-sm: 12px;
+  --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
+}
+
+[data-theme="dark"] {
+  --bg: #0f0e0c;
+  --bg2: #181612;
+  --surface: #1e1c18;
+  --surface2: #252219;
+  --border: #302c24;
+  --text: #f0ece4;
+  --text2: #9e9485;
+  --text3: #5a5348;
+  --ink: #f0ece4;
+  --green-bg: #0d2e1c;
+  --yellow-bg: #2a2000;
+  --red-bg: #2a0e0e;
+  --accent-light: #111a35;
+  --shadow: 0 2px 16px rgba(0,0,0,0.35);
+  --shadow-md: 0 8px 40px rgba(0,0,0,0.5);
+}
+
+/* =============================================
+   RESET
+============================================= */
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: 'Instrument Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background var(--transition), color var(--transition);
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 16px 80px;
+}
+.container { width: 100%; max-width: 520px; }
+
+/* =============================================
+   HEADER
+============================================= */
+.site-header {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 0 8px;
+}
+.logo { display: flex; align-items: center; gap: 9px; }
+.logo-mark {
+  width: 36px; height: 36px;
+  background: var(--text);
+  color: var(--bg);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-weight: 900;
+  font-size: 15px;
+  letter-spacing: -1px;
+  flex-shrink: 0;
+  transition: background var(--transition), color var(--transition);
+}
+.logo-text {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.theme-btn {
+  width: 38px; height: 38px;
+  border-radius: 11px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text2);
+  cursor: pointer;
+  font-size: 17px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition);
+  box-shadow: var(--shadow);
+}
+.theme-btn:hover { transform: scale(1.07); }
+
+/* =============================================
+   HERO
+============================================= */
+.hero { text-align: center; padding: 28px 0 24px; }
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text3);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  padding: 4px 12px;
+  margin-bottom: 14px;
+}
+.hero h1 {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: clamp(2rem, 8vw, 3rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+.hero h1 em {
+  font-style: normal;
+  position: relative;
+  display: inline-block;
+}
+.hero h1 em::after {
+  content: '';
+  position: absolute;
+  bottom: 2px; left: 0; right: 0;
+  height: 4px;
+  background: var(--accent);
+  border-radius: 2px;
+  opacity: 0.35;
+}
+.hero p { font-size: 0.92rem; color: var(--text2); line-height: 1.65; max-width: 340px; margin: 0 auto; }
+
+/* =============================================
+   CARD
+============================================= */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 22px;
+  box-shadow: var(--shadow);
+  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
+  margin-bottom: 14px;
+}
+.section-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text3);
+  margin-bottom: 14px;
+}
+
+/* =============================================
+   FORM
+============================================= */
+.input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.input-row.full { grid-template-columns: 1fr; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font-size: 0.74rem; font-weight: 600; color: var(--text2); letter-spacing: 0.02em; }
+.input-wrap { position: relative; display: flex; align-items: center; }
+.input-prefix {
+  position: absolute; left: 13px;
+  font-size: 0.88rem; font-weight: 600;
+  color: var(--text3); pointer-events: none;
+  transition: color var(--transition);
+}
+.field input, .field select {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--surface2);
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: 'Cabinet Grotesk', sans-serif;
+  outline: none;
+  transition: all var(--transition);
+  -webkit-appearance: none;
+}
+.field input.has-prefix { padding-left: 30px; }
+.field input:focus, .field select:focus {
+  border-color: var(--accent);
+  background: var(--surface);
+  box-shadow: 0 0 0 3px rgba(42,91,215,0.1);
+}
+.field select {
+  cursor: pointer;
+  padding-right: 32px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a09890' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+.slider-field { margin-top: 4px; }
+.slider-label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; }
+.slider-label-row label { font-size: 0.74rem; font-weight: 600; color: var(--text2); }
+.slider-val {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 0.85rem; font-weight: 800;
+  color: var(--accent);
+  background: var(--accent-light);
+  padding: 2px 10px; border-radius: 20px;
+}
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%; height: 5px;
+  border-radius: 99px;
+  background: var(--border);
+  outline: none; cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 2px 8px rgba(42,91,215,0.3);
+  transition: transform 0.15s;
+}
+input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+/* =============================================
+   PRESETS
+============================================= */
+.preset-list { display: flex; flex-wrap: wrap; gap: 7px; }
+.preset-btn {
+  display: flex; align-items: center; gap: 5px;
+  padding: 7px 13px;
+  border-radius: 30px;
+  border: 1.5px solid var(--border);
+  background: var(--surface2);
+  color: var(--text2);
+  font-size: 0.78rem; font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+  font-family: 'Instrument Sans', sans-serif;
+  white-space: nowrap;
+}
+.preset-btn:hover, .preset-btn.active {
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(26,22,17,0.15);
+}
+
+/* =============================================
+   RESULT CARD
+============================================= */
+.result-card {
+  background: var(--text);
+  border: none;
+  color: var(--bg);
+  padding: 28px 24px;
+  position: relative;
+  overflow: hidden;
+  transition: background var(--transition);
+}
+[data-theme="dark"] .result-card { background: var(--surface); border: 1px solid var(--border); }
+.result-card::before {
+  content: '';
+  position: absolute;
+  top: -80px; right: -80px;
+  width: 220px; height: 220px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+  pointer-events: none;
+}
+
+.result-empty { text-align: center; padding: 16px 0; }
+.result-empty .empty-icon { font-size: 36px; margin-bottom: 8px; opacity: 0.35; }
+.result-empty p { font-size: 0.85rem; opacity: 0.45; line-height: 1.5; color: var(--bg2); }
+[data-theme="dark"] .result-empty p { color: var(--text3); opacity: 1; }
+
+.result-body { display: none; }
+.result-body.show { display: block; }
+.result-empty.hide { display: none; }
+
+.verdict-badge {
+  display: inline-flex;
+  align-items: center; gap: 6px;
+  padding: 5px 13px;
+  border-radius: 30px;
+  font-size: 0.73rem; font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.verdict-badge.green { background: var(--green-bg); color: var(--green); }
+.verdict-badge.yellow { background: var(--yellow-bg); color: var(--yellow); }
+.verdict-badge.red { background: var(--red-bg); color: var(--red); }
+
+.result-headline {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: clamp(2.4rem, 10vw, 4rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1.0;
+  color: var(--bg);
+  margin-bottom: 4px;
+}
+[data-theme="dark"] .result-headline { color: var(--text); }
+.result-headline .num {
+  display: inline-block;
+  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.25s;
+}
+.result-headline .num.pop { animation: numPop 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes numPop {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.result-headline .muted { opacity: 0.45; }
+
+.result-sub {
+  font-size: 0.9rem;
+  color: rgba(245,243,239,0.5);
+  margin-bottom: 22px;
+  line-height: 1.5;
+}
+[data-theme="dark"] .result-sub { color: var(--text3); }
+
+.result-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.stat-box {
+  background: rgba(255,255,255,0.07);
+  border-radius: 12px;
+  padding: 11px 12px;
+}
+[data-theme="dark"] .stat-box { background: var(--surface2); border: 1px solid var(--border); }
+.stat-box .s-label {
+  font-size: 0.65rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.07em;
+  color: rgba(245,243,239,0.4);
+  margin-bottom: 4px;
+}
+[data-theme="dark"] .stat-box .s-label { color: var(--text3); }
+.stat-box .s-val {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 1.05rem; font-weight: 800;
+  color: var(--bg); line-height: 1.2;
+}
+[data-theme="dark"] .stat-box .s-val { color: var(--text); }
+
+.progress-section { margin-bottom: 20px; }
+.progress-label-row {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 7px;
+}
+.progress-label-row span { font-size: 0.72rem; font-weight: 600; color: rgba(245,243,239,0.45); }
+[data-theme="dark"] .progress-label-row span { color: var(--text3); }
+.progress-label-row strong { font-family: 'Cabinet Grotesk', sans-serif; font-size: 0.8rem; color: rgba(245,243,239,0.85); }
+[data-theme="dark"] .progress-label-row strong { color: var(--text2); }
+
+.progress-track { height: 7px; background: rgba(255,255,255,0.1); border-radius: 99px; overflow: hidden; }
+[data-theme="dark"] .progress-track { background: var(--border); }
+.progress-fill {
+  height: 100%; border-radius: 99px;
+  background: rgba(255,255,255,0.7);
+  transition: width 0.65s cubic-bezier(0.4,0,0.2,1);
+  width: 0%;
+}
+.progress-fill.green { background: linear-gradient(90deg, #2ecc71, #27ae60); }
+.progress-fill.yellow { background: linear-gradient(90deg, #f5c518, #e6a817); }
+.progress-fill.red { background: linear-gradient(90deg, #e84545, #c0392b); }
+
+.share-btn {
+  width: 100%;
+  padding: 13px;
+  border-radius: 12px;
+  border: 1.5px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.08);
+  color: rgba(245,243,239,0.9);
+  font-size: 0.85rem; font-weight: 600;
+  cursor: pointer;
+  font-family: 'Instrument Sans', sans-serif;
+  transition: all var(--transition);
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+}
+[data-theme="dark"] .share-btn { border-color: var(--border); background: var(--surface2); color: var(--text); }
+.share-btn:hover { background: rgba(255,255,255,0.14); transform: translateY(-1px); }
+
+.share-toast {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--text); color: var(--bg);
+  padding: 10px 20px; border-radius: 30px;
+  font-size: 0.82rem; font-weight: 600;
+  z-index: 999; pointer-events: none;
+  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
+  opacity: 0; white-space: nowrap;
+  box-shadow: var(--shadow-md);
+}
+.share-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+/* =============================================
+   BREAKDOWN
+============================================= */
+.breakdown-list { display: flex; flex-direction: column; gap: 10px; }
+.breakdown-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  background: var(--surface2);
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  animation: slideIn 0.3s ease forwards;
+}
+@keyframes slideIn {
+  from { opacity:0; transform: translateY(5px); }
+  to { opacity:1; transform: translateY(0); }
+}
+.b-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+.b-label { flex: 1; font-size: 0.82rem; color: var(--text2); line-height: 1.4; }
+.b-label strong { display: block; font-size: 0.92rem; font-weight: 600; color: var(--text); }
+.b-val {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 1rem; font-weight: 800;
+  color: var(--text); text-align: right; white-space: nowrap;
+}
+
+/* =============================================
+   FOOTER
+============================================= */
+footer {
+  text-align: center; color: var(--text3);
+  font-size: 0.72rem; padding-top: 20px; line-height: 1.8;
+}
+
+@media (max-width: 420px) {
+  .result-stats { grid-template-columns: 1fr 1fr; }
+  .stat-box:last-child { grid-column: 1/-1; }
+}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+</style>
+</head>
+
+<body>
+<div class="page">
+
+  <header class="site-header">
+    <div class="logo">
+      <div class="logo-mark">$?</div>
+      <span class="logo-text">CanIAffordThis</span>
+    </div>
+    <button class="theme-btn" id="themeBtn" aria-label="Toggle dark mode">🌙</button>
+  </header>
+
+  <div class="container">
+
+    <section class="hero">
+      <div class="hero-eyebrow">💸 Free affordability calculator</div>
+      <h1>Can you <em>really</em><br>afford this?</h1>
+      <p>See how many days of your life that purchase actually costs — based on your real take-home income.</p>
+    </section>
+
+    <!-- INPUTS -->
+    <div class="card">
+      <div class="section-label">Your details</div>
+      <div class="input-row">
+        <div class="field">
+          <label for="currency">Currency</label>
+          <select id="currency">
+            <option value="USD">🇺🇸 USD $</option>
+            <option value="EUR">🇪🇺 EUR €</option>
+            <option value="GBP">🇬🇧 GBP £</option>
+            <option value="DZD">🇩🇿 DZD DA</option>
+            <option value="CAD">🇨🇦 CAD C$</option>
+            <option value="AUD">🇦🇺 AUD A$</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="income">Monthly income</label>
+          <div class="input-wrap">
+            <span class="input-prefix" id="currSymbol">$</span>
+            <input type="number" id="income" class="has-prefix" placeholder="3,500" min="1" inputmode="decimal">
+          </div>
+        </div>
+      </div>
+      <div class="input-row full">
+        <div class="field">
+          <label for="price">Item price</label>
+          <div class="input-wrap">
+            <span class="input-prefix" id="currSymbol2">$</span>
+            <input type="number" id="price" class="has-prefix" placeholder="999" min="0" inputmode="decimal">
+          </div>
+        </div>
+      </div>
+      <div class="slider-field">
+        <div class="slider-label-row">
+          <label for="hours">Work hours per day</label>
+          <span class="slider-val" id="hoursDisplay">8h</span>
+        </div>
+        <input type="range" id="hours" min="1" max="16" value="8" step="1">
+      </div>
+    </div>
+
+    <!-- PRESETS -->
+    <div class="card">
+      <div class="section-label">Quick presets</div>
+      <div class="preset-list" id="presetList"></div>
+    </div>
+
+    <!-- RESULT -->
+    <div class="card result-card" id="resultCard">
+      <div class="result-empty" id="resultEmpty">
+        <div class="empty-icon">🧮</div>
+        <p>Enter your income and<br>an item price to see the result.</p>
+      </div>
+      <div class="result-body" id="resultBody">
+        <div class="verdict-badge" id="verdictBadge"></div>
+        <div class="result-headline">
+          <span class="num" id="daysNum">0</span> <span class="muted">days</span>
+        </div>
+        <div class="result-sub" id="resultSub">of work to afford this.</div>
+        <div class="result-stats">
+          <div class="stat-box">
+            <div class="s-label">Hours</div>
+            <div class="s-val" id="statHours">—</div>
+          </div>
+          <div class="stat-box">
+            <div class="s-label">Weeks</div>
+            <div class="s-val" id="statWeeks">—</div>
+          </div>
+          <div class="stat-box">
+            <div class="s-label">% of salary</div>
+            <div class="s-val" id="statPct">—</div>
+          </div>
+        </div>
+        <div class="progress-section">
+          <div class="progress-label-row">
+            <span>0%</span>
+            <strong id="progressLabel">vs. 1 month</strong>
+            <span id="progressEnd">—</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+        <button class="share-btn" id="shareBtn">📤 Share this result</button>
+      </div>
+    </div>
+
+    <!-- BREAKDOWN -->
+    <div class="card" id="breakdownCard" style="display:none">
+      <div class="section-label">Full breakdown</div>
+      <div class="breakdown-list" id="breakdownList"></div>
+    </div>
+
+    <footer>
+      <p>affordability calculator · salary vs price · how long to afford something</p>
+      <p>Estimates based on net monthly income ÷ 30 days.</p>
+    </footer>
+  </div>
+</div>
+
+<div class="share-toast" id="shareToast">✅ Copied to clipboard!</div>
+
+<script>
+/* =============================================
+   DATA
+============================================= */
+const CURRENCIES = {
+  USD: { symbol: '$', rate: 1 },
+  EUR: { symbol: '€', rate: 0.92 },
+  GBP: { symbol: '£', rate: 0.79 },
+  DZD: { symbol: 'DA', rate: 134.5 },
+  CAD: { symbol: 'C$', rate: 1.36 },
+  AUD: { symbol: 'A$', rate: 1.52 },
+};
+
+const PRESETS = [
+  { emoji: '📱', label: 'iPhone 16', usd: 999 },
+  { emoji: '💻', label: 'MacBook', usd: 1299 },
+  { emoji: '🚗', label: 'Used Car', usd: 15000 },
+  { emoji: '🏠', label: 'Monthly Rent', usd: 1500 },
+  { emoji: '✈️', label: 'Flight', usd: 450 },
+  { emoji: '👟', label: 'Sneakers', usd: 180 },
+  { emoji: '📺', label: '4K TV', usd: 799 },
+  { emoji: '⌚', label: 'Smartwatch', usd: 399 },
+];
+
+/* =============================================
+   STATE
+============================================= */
+const state = { income: '', price: '', hours: 8, currency: 'USD', theme: 'light' };
+
+/* =============================================
+   HELPERS
+============================================= */
+function fmtCurrency(amount, cur) {
+  const c = CURRENCIES[cur];
+  const rounded = amount < 1 ? amount.toFixed(2) : Math.round(amount).toLocaleString();
+  return c.symbol === 'DA' ? rounded + ' DA' : c.symbol + rounded;
+}
+
+function getCurrSym(cur) { return CURRENCIES[cur]?.symbol || '$'; }
+
+/* =============================================
+   PRESETS
+============================================= */
+function buildPresets() {
+  document.getElementById('presetList').innerHTML = PRESETS.map(p =>
+    `<button class="preset-btn" data-usd="${p.usd}" onclick="applyPreset(this,${p.usd})">${p.emoji} ${p.label}</button>`
+  ).join('');
+}
+
+function applyPreset(btn, usdPrice) {
+  const converted = Math.round(usdPrice * CURRENCIES[state.currency].rate);
+  document.getElementById('price').value = converted;
+  state.price = converted;
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  calculate();
+}
+
+/* =============================================
+   CALCULATE
+============================================= */
+function calculate() {
+  const income = parseFloat(state.income);
+  const price = parseFloat(state.price);
+  const hours = parseInt(state.hours);
+  const rb = document.getElementById('resultBody');
+  const re = document.getElementById('resultEmpty');
+  const bc = document.getElementById('breakdownCard');
+
+  if (!income || !price || income <= 0 || price < 0) {
+    rb.classList.remove('show');
+    re.classList.remove('hide');
+    bc.style.display = 'none';
+    return;
+  }
+
+  re.classList.add('hide');
+  rb.classList.add('show');
+  bc.style.display = 'block';
+
+  const daily   = income / 30;
+  const hourly  = daily / hours;
+  const days    = price / daily;
+  const hrs     = price / hourly;
+  const weeks   = days / 7;
+  const pct     = (price / income) * 100;
+
+  // Verdict
+  let verdict, vc, pc;
+  if (days <= 3)       { verdict = '✅ Affordable';     vc = pc = 'green'; }
+  else if (days <= 14) { verdict = '⚠️ Expensive';      vc = pc = 'yellow'; }
+  else                 { verdict = '❌ Very Expensive';  vc = pc = 'red'; }
+
+  // Headline
+  const daysEl = document.getElementById('daysNum');
+  const newDays = days < 1 ? '< 1' : days > 9999 ? '9999+' : Math.ceil(days).toLocaleString();
+  if (daysEl.textContent !== newDays) {
+    daysEl.textContent = newDays;
+    daysEl.classList.remove('pop');
+    void daysEl.offsetWidth;
+    daysEl.classList.add('pop');
+  }
+
+  const presetLabel = (document.querySelector('.preset-btn.active') || {}).textContent?.trim().replace(/^\S+\s/,'') || 'this item';
+  document.getElementById('resultSub').textContent =
+    `of your life to afford ${presetLabel}. That's ${Math.ceil(hrs).toLocaleString()} hours.`;
+
+  const badge = document.getElementById('verdictBadge');
+  badge.textContent = verdict;
+  badge.className = `verdict-badge ${vc}`;
+
+  document.getElementById('statHours').textContent = hrs > 9999 ? '9999+h' : Math.ceil(hrs) + 'h';
+  document.getElementById('statWeeks').textContent = weeks < 0.1 ? '<0.1w' : weeks > 999 ? '999+w' : weeks.toFixed(1) + 'w';
+  document.getElementById('statPct').textContent   = pct > 9999 ? '9999%+' : pct.toFixed(0) + '%';
+
+  const fill = document.getElementById('progressFill');
+  fill.style.width = Math.min(pct, 100) + '%';
+  fill.className = `progress-fill ${pc}`;
+  document.getElementById('progressEnd').textContent = fmtCurrency(income, state.currency);
+
+  renderBreakdown(income, price, hours, daily, hourly, days, hrs);
+  saveToStorage();
+}
+
+function renderBreakdown(income, price, hours, daily, hourly, days, hrs) {
+  const cur = state.currency;
+  const rows = [
+    { icon: '📅', label: 'Daily income',        sub: `Based on ${hours}h/day workday`,  val: fmtCurrency(daily, cur) },
+    { icon: '⏱️', label: 'Hourly income',        sub: 'Per hour worked',                val: fmtCurrency(hourly, cur) },
+    { icon: '🏷️', label: 'Item price',           sub: 'What you want to buy',           val: fmtCurrency(price, cur) },
+    { icon: '📆', label: 'Days of work needed',  sub: 'To afford this item',            val: days < 1 ? '< 1 day' : Math.ceil(days).toLocaleString() + ' days' },
+    { icon: '⏰', label: 'Hours of work needed', sub: 'Total hours',                    val: Math.ceil(hrs).toLocaleString() + 'h' },
+    { icon: '📊', label: 'As % of monthly pay',  sub: 'Portion of one salary',          val: ((price / income) * 100).toFixed(1) + '%' },
+  ];
+  document.getElementById('breakdownList').innerHTML = rows.map((r, i) => `
+    <div class="breakdown-item" style="animation-delay:${i*0.04}s">
+      <div class="b-icon">${r.icon}</div>
+      <div class="b-label"><strong>${r.label}</strong>${r.sub}</div>
+      <div class="b-val">${r.val}</div>
+    </div>`).join('');
+}
+
+/* =============================================
+   SHARE
+============================================= */
+document.getElementById('shareBtn').addEventListener('click', () => {
+  const income = parseFloat(state.income);
+  const price  = parseFloat(state.price);
+  if (!income || !price) return;
+  const daily = income / 30;
+  const days  = Math.ceil(price / daily);
+  const hrs   = Math.ceil(price / (daily / state.hours));
+  const preset = (document.querySelector('.preset-btn.active') || {}).textContent?.trim().replace(/^\S+\s/,'') || 'something';
+  const emoji = days <= 3 ? '✅' : days <= 14 ? '⚠️' : '😭';
+  const text = `${emoji} I need ${days} days of work (${hrs}h) to buy ${preset} (${fmtCurrency(price, state.currency)}) with my ${fmtCurrency(income, state.currency)}/month salary.\n\nHow about you? → CanIAffordThis.app`;
+  try { navigator.clipboard.writeText(text).then(showToast); } catch(e) {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    showToast();
+  }
+});
+
+function showToast() {
+  const t = document.getElementById('shareToast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+/* =============================================
+   EVENTS
+============================================= */
+document.getElementById('income').addEventListener('input', e => {
+  state.income = e.target.value;
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+  calculate();
+});
+document.getElementById('price').addEventListener('input', e => {
+  state.price = e.target.value;
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+  calculate();
+});
+document.getElementById('hours').addEventListener('input', e => {
+  state.hours = parseInt(e.target.value);
+  document.getElementById('hoursDisplay').textContent = state.hours + 'h';
+  calculate();
+});
+document.getElementById('currency').addEventListener('change', e => {
+  state.currency = e.target.value;
+  const sym = getCurrSym(state.currency);
+  document.getElementById('currSymbol').textContent = sym;
+  document.getElementById('currSymbol2').textContent = sym;
+  // Reconvert active preset
+  const active = document.querySelector('.preset-btn.active');
+  if (active) {
+    const converted = Math.round(parseFloat(active.dataset.usd) * CURRENCIES[state.currency].rate);
+    document.getElementById('price').value = converted;
+    state.price = converted;
+  }
+  calculate();
+});
+document.getElementById('themeBtn').addEventListener('click', () => {
+  state.theme = state.theme === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', state.theme);
+  document.getElementById('themeBtn').textContent = state.theme === 'dark' ? '☀️' : '🌙';
+  saveToStorage();
+});
+
+/* =============================================
+   LOCALSTORAGE
+============================================= */
+function saveToStorage() {
+  try { localStorage.setItem('cia_state', JSON.stringify(state)); } catch(e) {}
+}
+function loadFromStorage() {
+  try {
+    const s = JSON.parse(localStorage.getItem('cia_state') || 'null');
+    if (!s) return;
+    if (s.theme) {
+      state.theme = s.theme;
+      document.documentElement.setAttribute('data-theme', s.theme);
+      document.getElementById('themeBtn').textContent = s.theme === 'dark' ? '☀️' : '🌙';
+    }
+    if (s.currency) {
+      state.currency = s.currency;
+      document.getElementById('currency').value = s.currency;
+      const sym = getCurrSym(s.currency);
+      document.getElementById('currSymbol').textContent = sym;
+      document.getElementById('currSymbol2').textContent = sym;
+    }
+    if (s.hours) {
+      state.hours = s.hours;
+      document.getElementById('hours').value = s.hours;
+      document.getElementById('hoursDisplay').textContent = s.hours + 'h';
+    }
+    if (s.income) { state.income = s.income; document.getElementById('income').value = s.income; }
+    if (s.price)  { state.price  = s.price;  document.getElementById('price').value  = s.price; }
+  } catch(e) {}
+}
+
+/* =============================================
+   INIT
+============================================= */
+buildPresets();
+loadFromStorage();
+calculate();
+</script>
+</body>
+</html>
