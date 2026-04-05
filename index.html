@@ -765,7 +765,7 @@ document.getElementById('shareBtn').addEventListener('click', () => {
   const hrs   = Math.ceil(price / (daily / state.hours));
   const preset = (document.querySelector('.preset-btn.active') || {}).textContent?.trim().replace(/^\S+\s/,'') || 'something';
   const emoji = days <= 3 ? '✅' : days <= 14 ? '⚠️' : '😭';
-  const text = `${emoji} I need ${days} days of work (${hrs}h) to buy ${preset} (${fmtCurrency(price, state.currency)}) with my ${fmtCurrency(income, state.currency)}/month salary.\n\nHow about you? → CanIAffordThis.app`;
+  const text = `${emoji} I need ${days} days of work (${hrs}h) to buy ${preset} (${fmtCurrency(price, state.currency)}) with my ${fmtCurrency(income, state.currency)}/month salary.\n\nHow about you? → can-i-afford-this-one.vercel.app/`;
   try { navigator.clipboard.writeText(text).then(showToast); } catch(e) {
     const ta = document.createElement('textarea');
     ta.value = text; document.body.appendChild(ta); ta.select();
